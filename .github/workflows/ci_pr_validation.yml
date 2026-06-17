@@ -1,0 +1,103 @@
+name: CI - PR Validation
+
+permissions:
+    contents: read
+
+on:
+    pull_request:
+        branches: ["**"] # Run PR validation on any branch.
+
+    workflow_dispatch: # Manual trigger option.
+
+jobs:
+    # Build the arm-dev-env image once and populate the shared build cache, so
+    # the per-architecture jobs below restore it instead of each doing a full
+    # (toolchain-downloading) cold build.
+    build_dev_env:
+        name: Build dev environment image
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+
+        steps:
+            - name: Checkout Github repository
+              uses: actions/checkout@v6
+              with:
+                submodules: false # This job only needs arm-dev-env (fetched below), not the libraries.
+
+            - name: Check out the arm-dev-env submodule
+              run: git submodule update --init arm-dev-env
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v4
+
+            - name: Warm the dev environment image build cache
+              uses: docker/build-push-action@v6
+              with:
+                context: arm-dev-env # Dockerfile defaults to <context>/Dockerfile.
+                platforms: linux/amd64
+                push: false # Never push: arm-dev-env is consumed as a Dockerfile, not a published image.
+                load: false # Cache only; nothing to run in this job.
+                cache-from: type=gha,scope=arm-dev-env
+                cache-to: type=gha,mode=max,scope=arm-dev-env
+                provenance: false # Disabled implicit provenance.
+
+    verify_pr:
+        name: ${{ matrix.arch }}
+        needs: build_dev_env
+        runs-on: ubuntu-latest
+        timeout-minutes: 45
+
+        strategy:
+            fail-fast: false # Don't cancel other jobs if one fails.
+
+            max-parallel: 20 # Use maximum possible parallelisation.
+
+            matrix:
+                arch: [m0, m0plus, m1, m3]
+
+        steps:
+            - name: Checkout Github repository
+              uses: actions/checkout@v6
+              with:
+                submodules: recursive # Libraries + toolchains under test, and arm-dev-env.
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v4
+
+            - name: Build the dev environment image (restored from cache)
+              uses: docker/build-push-action@v6
+              with:
+                context: arm-dev-env
+                platforms: linux/amd64
+                push: false
+                load: true # Load into the local Docker daemon so the next step can run it.
+                tags: arm-dev-env:ci
+                cache-from: type=gha,scope=arm-dev-env
+                provenance: false
+
+            - name: Run CMake workflow
+              run: |
+                docker run --rm \
+                  --volume "${{ github.workspace }}:/work" \
+                  --workdir /work \
+                  arm-dev-env:ci \
+                  cmake --workflow --preset=${{ matrix.arch }}
+
+    pr_verification_summary:
+        name: PR verification summary
+        needs: verify_pr
+
+        runs-on: ubuntu-latest
+
+        timeout-minutes: 5
+
+        if: always() # Run even if some matrix jobs failed.
+
+        steps:
+            - name: Check if all jobs succeeded
+              run: |
+                if [[ "${{ needs.verify_pr.result }}" != "success" ]]; then
+                  echo "One or more jobs failed"
+                  exit 1
+                fi
+                echo "All jobs completed successfully"

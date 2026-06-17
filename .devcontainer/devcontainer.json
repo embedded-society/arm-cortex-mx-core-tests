@@ -1,0 +1,46 @@
+{
+    "name": "arm-cortex-mx-core-tests",
+
+    // Build the development environment from the arm-dev-env submodule's
+    // Dockerfile (no prebuilt image). Both paths are relative to this
+    // devcontainer.json file.
+    "build": {
+        "dockerfile": "../arm-dev-env/Dockerfile",
+        "context": "../arm-dev-env"
+    },
+
+    // Runs on the host BEFORE the container is built, so the submodules are
+    // present: arm-dev-env (provides the Dockerfile above) plus every library
+    // and toolchain under test (the CMake build add_subdirectory()s them).
+    "initializeCommand": "git submodule update --init --recursive",
+
+    "workspaceFolder": "/root/arm-cortex-mx-core-tests",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/root/arm-cortex-mx-core-tests,type=bind",
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "dan-c-underwood.arm",
+                "davidanson.vscode-markdownlint",
+                "donjayamanne.githistory",
+                "editorconfig.editorconfig",
+                "felipecaputo.git-project-manager",
+                "github.vscode-github-actions",
+                "Gruntfuggly.todo-tree",
+                "ms-vscode.cmake-tools",
+                "ms-vscode.cpptools-extension-pack",
+                "ms-vscode.cpptools-themes",
+                "ms-vscode.hexeditor",
+                "ms-vscode.notepadplusplus-keybindings",
+                "redhat.vscode-yaml",
+                "trond-snekvik.gnu-mapfiles",
+                "xaver.clang-format",
+                "usernamehw.errorlens",
+                "GitHub.copilot"
+            ],
+            "settings": {
+                "cmake.configureOnOpen": false
+            }
+        }
+    }
+}

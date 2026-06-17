@@ -1,0 +1,207 @@
+#include <arm-cortex-m0-core/nvic.hpp>
+
+// Test isIrqEnabled()
+extern "C" [[gnu::naked]] bool test_is_irq_enabled() {
+    return ArmCortex::Nvic::isIrqEnabled(5);
+}
+
+// CHECK-LABEL: <test_is_irq_enabled>:
+// CHECK-NEXT: ldr r3, [pc, #4]
+// CHECK-NEXT: ldr r0, [r3, #0]
+// CHECK-NEXT: lsls r0, r0, #26
+// CHECK-NEXT: lsrs r0, r0, #31
+// CHECK-NEXT: .word 0xe000e100
+// CHECK-EMPTY:
+
+// Test enableIrq()
+extern "C" [[gnu::naked]] void test_enable_irq() {
+    ArmCortex::Nvic::enableIrq(10);
+}
+
+// CHECK-LABEL: <test_enable_irq>:
+
+// DEBUG-CHECK-NEXT: ldr r3, [pc, #4]
+// DEBUG-CHECK-NEXT: movs r2, #128
+// DEBUG-CHECK-NEXT: lsls r2, r2, #3
+// DEBUG-CHECK-NEXT: str r2, [r3, #0]
+// DEBUG-CHECK-NEXT: .word 0xe000e100
+
+// MINSIZE-CHECK-NEXT: movs r2, #128
+// MINSIZE-CHECK-NEXT: ldr r3, [pc, #4]
+// MINSIZE-CHECK-NEXT: lsls r2, r2, #3
+// MINSIZE-CHECK-NEXT: str r2, [r3, #0]
+// MINSIZE-CHECK-NEXT: .word 0xe000e100
+
+// MAXSPEED-CHECK-NEXT: movs r2, #128
+// MAXSPEED-CHECK-NEXT: ldr r3, [pc, #4]
+// MAXSPEED-CHECK-NEXT: lsls r2, r2, #3
+// MAXSPEED-CHECK-NEXT: str r2, [r3, #0]
+// MAXSPEED-CHECK-NEXT: .word 0xe000e100
+
+// CHECK-EMPTY:
+
+// Test disableIrq()
+extern "C" [[gnu::naked]] void test_disable_irq() {
+    ArmCortex::Nvic::disableIrq(7);
+}
+
+// CHECK-LABEL: <test_disable_irq>:
+
+// DEBUG-CHECK-NEXT: movs r3, #128
+// DEBUG-CHECK-NEXT: ldr r2, [pc, #4]
+// DEBUG-CHECK-NEXT: str r3, [r2, r3]
+// DEBUG-CHECK-NEXT: nop
+// DEBUG-CHECK-NEXT: .word 0xe000e100
+
+// MINSIZE-CHECK-NEXT: movs r2, #128
+// MINSIZE-CHECK-NEXT: ldr r3, [pc, #4]
+// MINSIZE-CHECK-NEXT: str r2, [r3, #124]
+// MINSIZE-CHECK-NEXT: nop
+// MINSIZE-CHECK-NEXT: .word 0xe000e104
+
+// MAXSPEED-CHECK-NEXT: movs r3, #128
+// MAXSPEED-CHECK-NEXT: ldr r2, [pc, #4]
+// MAXSPEED-CHECK-NEXT: str r3, [r2, r3]
+// MAXSPEED-CHECK-NEXT: nop
+// MAXSPEED-CHECK-NEXT: .word 0xe000e100
+
+// CHECK-EMPTY:
+
+// Test isIrqPending()
+extern "C" [[gnu::naked]] bool test_is_irq_pending() {
+    return ArmCortex::Nvic::isIrqPending(3);
+}
+
+// CHECK-LABEL: <test_is_irq_pending>:
+
+// DEBUG-CHECK-NEXT: ldr r2, [pc, #8]
+// DEBUG-CHECK-NEXT: movs r3, #128
+// DEBUG-CHECK-NEXT: lsls r3, r3, #1
+// DEBUG-CHECK-NEXT: ldr r0, [r2, r3]
+// DEBUG-CHECK-NEXT: lsls r0, r0, #28
+// DEBUG-CHECK-NEXT: lsrs r0, r0, #31
+// DEBUG-CHECK-NEXT: .word 0xe000e100
+
+// MINSIZE-CHECK-NEXT: ldr r3, [pc, #4]
+// MINSIZE-CHECK-NEXT: ldr r0, [r3, #4]
+// MINSIZE-CHECK-NEXT: lsls r0, r0, #28
+// MINSIZE-CHECK-NEXT: lsrs r0, r0, #31
+// MINSIZE-CHECK-NEXT: .word 0xe000e1fc
+
+// MAXSPEED-CHECK-NEXT: movs r3, #128
+// MAXSPEED-CHECK-NEXT: ldr r2, [pc, #8]
+// MAXSPEED-CHECK-NEXT: lsls r3, r3, #1
+// MAXSPEED-CHECK-NEXT: ldr r0, [r2, r3]
+// MAXSPEED-CHECK-NEXT: lsls r0, r0, #28
+// MAXSPEED-CHECK-NEXT: lsrs r0, r0, #31
+// MAXSPEED-CHECK-NEXT: .word 0xe000e100
+
+// CHECK-EMPTY:
+
+// Test setPendingIrq()
+extern "C" [[gnu::naked]] void test_set_pending_irq() {
+    ArmCortex::Nvic::setPendingIrq(12);
+}
+
+// CHECK-LABEL: <test_set_pending_irq>:
+
+// DEBUG-CHECK-NEXT: ldr r2, [pc, #8]
+// DEBUG-CHECK-NEXT: movs r3, #128
+// DEBUG-CHECK-NEXT: lsls r3, r3, #1
+// DEBUG-CHECK-NEXT: movs r1, #128
+// DEBUG-CHECK-NEXT: lsls r1, r1, #5
+// DEBUG-CHECK-NEXT: str r1, [r2, r3]
+// DEBUG-CHECK-NEXT: .word 0xe000e100
+
+// MINSIZE-CHECK-NEXT: movs r2, #128
+// MINSIZE-CHECK-NEXT: ldr r3, [pc, #4]
+// MINSIZE-CHECK-NEXT: lsls r2, r2, #5
+// MINSIZE-CHECK-NEXT: str r2, [r3, #4]
+// MINSIZE-CHECK-NEXT: .word 0xe000e1fc
+
+// MAXSPEED-CHECK-NEXT: movs r3, #128
+// MAXSPEED-CHECK-NEXT: movs r1, #128
+// MAXSPEED-CHECK-NEXT: ldr r2, [pc, #4]
+// MAXSPEED-CHECK-NEXT: lsls r3, r3, #1
+// MAXSPEED-CHECK-NEXT: lsls r1, r1, #5
+// MAXSPEED-CHECK-NEXT: str r1, [r2, r3]
+// MAXSPEED-CHECK-NEXT: .word 0xe000e100
+
+// CHECK-EMPTY:
+
+// Test clearPendingIrq()
+extern "C" [[gnu::naked]] void test_clear_pending_irq() {
+    ArmCortex::Nvic::clearPendingIrq(15);
+}
+
+// CHECK-LABEL: <test_clear_pending_irq>:
+
+// DEBUG-CHECK-NEXT: ldr r2, [pc, #8]
+// DEBUG-CHECK-NEXT: movs r3, #192
+// DEBUG-CHECK-NEXT: lsls r3, r3, #1
+// DEBUG-CHECK-NEXT: movs r1, #128
+// DEBUG-CHECK-NEXT: lsls r1, r1, #8
+// DEBUG-CHECK-NEXT: str r1, [r2, r3]
+// DEBUG-CHECK-NEXT: .word 0xe000e100
+
+// MINSIZE-CHECK-NEXT: movs r3, #192
+// MINSIZE-CHECK-NEXT: movs r1, #128
+// MINSIZE-CHECK-NEXT: ldr r2, [pc, #4]
+// MINSIZE-CHECK-NEXT: lsls r3, r3, #1
+// MINSIZE-CHECK-NEXT: lsls r1, r1, #8
+// MINSIZE-CHECK-NEXT: str r1, [r2, r3]
+// MINSIZE-CHECK-NEXT: .word 0xe000e100
+
+// MAXSPEED-CHECK-NEXT: movs r3, #192
+// MAXSPEED-CHECK-NEXT: movs r1, #128
+// MAXSPEED-CHECK-NEXT: ldr r2, [pc, #4]
+// MAXSPEED-CHECK-NEXT: lsls r3, r3, #1
+// MAXSPEED-CHECK-NEXT: lsls r1, r1, #8
+// MAXSPEED-CHECK-NEXT: str r1, [r2, r3]
+// MAXSPEED-CHECK-NEXT: .word 0xe000e100
+
+// CHECK-EMPTY:
+
+// Test reading IPR (interrupt priority)
+extern "C" [[gnu::naked]] uint8_t test_read_ipr() {
+    return ArmCortex::NVIC->IPR[5];
+}
+
+// CHECK-LABEL: <test_read_ipr>:
+// CHECK-NEXT: ldr r2, [pc, #4]
+// CHECK-NEXT: ldr r3, [pc, #8]
+// CHECK-NEXT: ldrb r0, [r2, r3]
+// CHECK-NEXT: uxtb r0, r0
+// CHECK-NEXT: .word 0xe000e100
+// CHECK-NEXT: .word 0x00000305
+// CHECK-EMPTY:
+
+// Test writing IPR (interrupt priority)
+extern "C" [[gnu::naked]] void test_write_ipr() {
+    ArmCortex::NVIC->IPR[5] = 0x80;
+}
+
+// CHECK-LABEL: <test_write_ipr>:
+
+// DEBUG-CHECK-NEXT: ldr r2, [pc, #4]
+// DEBUG-CHECK-NEXT: ldr r3, [pc, #8]
+// DEBUG-CHECK-NEXT: movs r1, #128
+// DEBUG-CHECK-NEXT: strb r1, [r2, r3]
+// DEBUG-CHECK-NEXT: .word 0xe000e100
+// DEBUG-CHECK-NEXT: .word 0x00000305
+
+// MINSIZE-CHECK-NEXT: movs r1, #128
+// MINSIZE-CHECK-NEXT: ldr r2, [pc, #4]
+// MINSIZE-CHECK-NEXT: ldr r3, [pc, #4]
+// MINSIZE-CHECK-NEXT: strb r1, [r2, r3]
+// MINSIZE-CHECK-NEXT: .word 0xe000e100
+// MINSIZE-CHECK-NEXT: .word 0x00000305
+
+// MAXSPEED-CHECK-NEXT: movs r1, #128
+// MAXSPEED-CHECK-NEXT: ldr r2, [pc, #4]
+// MAXSPEED-CHECK-NEXT: ldr r3, [pc, #4]
+// MAXSPEED-CHECK-NEXT: strb r1, [r2, r3]
+// MAXSPEED-CHECK-NEXT: .word 0xe000e100
+// MAXSPEED-CHECK-NEXT: .word 0x00000305
+
+// CHECK-EMPTY:
