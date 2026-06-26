@@ -25,6 +25,3 @@
 [submodule "armv6m-intrinsics"]
 	path = armv6m-intrinsics
 	url = git@github.com:embedded-society/armv6m-intrinsics.git
-[submodule "arm-dev-env"]
-	path = arm-dev-env
-	url = git@github.com:embedded-society/arm-dev-env.git

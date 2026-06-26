@@ -12,11 +12,42 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
 
-# Tests are grouped by the library they exercise. The selected architecture
-# (see the top-level CMakeLists.txt) determines which core library and which
-# intrinsics library are under test, and therefore which test directories build.
-# CORE_LIBRARY / INTRINSICS_LIBRARY are set by the top-level CMakeLists.txt and
-# match both the submodule directory names and the test directory names here.
+function(add_asm_test LIBRARY_TARGET TEST_NAME)
+    add_library(${TEST_NAME} STATIC
+        ${TEST_NAME}.cpp
+    )
 
-add_subdirectory(${CORE_LIBRARY})
-add_subdirectory(${INTRINSICS_LIBRARY})
+    target_link_libraries(${TEST_NAME} PRIVATE
+        ${LIBRARY_TARGET}
+    )
+
+    add_custom_target(${TEST_NAME}_asm
+        ALL
+        WORKING_DIRECTORY "$<TARGET_FILE_DIR:${TEST_NAME}>"
+        COMMAND "${CMAKE_COMMAND}" -E rm -f ${TEST_NAME}.asm
+        COMMAND "${CMAKE_OBJDUMP}" -d --no-show-raw-insn ${CMAKE_STATIC_LIBRARY_PREFIX}${TEST_NAME}${CMAKE_STATIC_LIBRARY_SUFFIX} > ${TEST_NAME}.asm
+        BYPRODUCTS ${TEST_NAME}.asm
+        VERBATIM
+        DEPENDS ${TEST_NAME}
+    )
+
+    add_test(
+        NAME ${TEST_NAME}
+        COMMAND filecheck "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}.cpp" --input-file "$<TARGET_FILE_DIR:${TEST_NAME}>/${TEST_NAME}.asm"
+            --check-prefixes=CHECK,$<UPPER_CASE:$<CONFIG>>-CHECK --allow-unused-prefixes
+    )
+endfunction()
+
+if(ARM_CORTEX_M_ARCH STREQUAL "M0")
+    add_subdirectory("arm-cortex-m0-core")
+    add_subdirectory("armv6m-intrinsics")
+elseif(ARM_CORTEX_M_ARCH STREQUAL "M0PLUS")
+    add_subdirectory("arm-cortex-m0plus-core")
+    add_subdirectory("armv6m-intrinsics")
+elseif(ARM_CORTEX_M_ARCH STREQUAL "M1")
+    add_subdirectory("arm-cortex-m1-core")
+    add_subdirectory("armv6m-intrinsics")
+elseif(ARM_CORTEX_M_ARCH STREQUAL "M3")
+    add_subdirectory("arm-cortex-m3-core")
+    add_subdirectory("armv7m-intrinsics")
+endif()

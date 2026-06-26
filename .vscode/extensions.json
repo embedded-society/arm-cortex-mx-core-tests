@@ -15,7 +15,6 @@
         "redhat.vscode-yaml",
         "trond-snekvik.gnu-mapfiles",
         "xaver.clang-format",
-        "usernamehw.errorlens",
-        "GitHub.copilot"
+        "usernamehw.errorlens"
     ]
 }

@@ -1,18 +1,9 @@
 {
     "name": "arm-cortex-mx-core-tests",
 
-    // Build the development environment from the arm-dev-env submodule's
-    // Dockerfile (no prebuilt image). Both paths are relative to this
-    // devcontainer.json file.
     "build": {
-        "dockerfile": "../arm-dev-env/Dockerfile",
-        "context": "../arm-dev-env"
+        "dockerfile": "Dockerfile"
     },
-
-    // Runs on the host BEFORE the container is built, so the submodules are
-    // present: arm-dev-env (provides the Dockerfile above) plus every library
-    // and toolchain under test (the CMake build add_subdirectory()s them).
-    "initializeCommand": "git submodule update --init --recursive",
 
     "workspaceFolder": "/root/arm-cortex-mx-core-tests",
     "workspaceMount": "source=${localWorkspaceFolder},target=/root/arm-cortex-mx-core-tests,type=bind",
@@ -35,8 +26,7 @@
                 "redhat.vscode-yaml",
                 "trond-snekvik.gnu-mapfiles",
                 "xaver.clang-format",
-                "usernamehw.errorlens",
-                "GitHub.copilot"
+                "usernamehw.errorlens"
             ],
             "settings": {
                 "cmake.configureOnOpen": false

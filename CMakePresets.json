@@ -188,49 +188,133 @@
         {
             "name": "m0",
             "steps": [
-                { "type": "configure", "name": "m0" },
-                { "type": "build", "name": "m0-debug" },
-                { "type": "build", "name": "m0-maxspeed" },
-                { "type": "build", "name": "m0-minsize" },
-                { "type": "test", "name": "m0-debug" },
-                { "type": "test", "name": "m0-maxspeed" },
-                { "type": "test", "name": "m0-minsize" }
+                {
+                    "type": "configure",
+                    "name": "m0"
+                },
+                {
+                    "type": "build",
+                    "name": "m0-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "m0-maxspeed"
+                },
+                {
+                    "type": "build",
+                    "name": "m0-minsize"
+                },
+                {
+                    "type": "test",
+                    "name": "m0-debug"
+                },
+                {
+                    "type": "test",
+                    "name": "m0-maxspeed"
+                },
+                {
+                    "type": "test",
+                    "name": "m0-minsize"
+                }
             ]
         },
         {
             "name": "m0plus",
             "steps": [
-                { "type": "configure", "name": "m0plus" },
-                { "type": "build", "name": "m0plus-debug" },
-                { "type": "build", "name": "m0plus-maxspeed" },
-                { "type": "build", "name": "m0plus-minsize" },
-                { "type": "test", "name": "m0plus-debug" },
-                { "type": "test", "name": "m0plus-maxspeed" },
-                { "type": "test", "name": "m0plus-minsize" }
+                {
+                    "type": "configure",
+                    "name": "m0plus"
+                },
+                {
+                    "type": "build",
+                    "name": "m0plus-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "m0plus-maxspeed"
+                },
+                {
+                    "type": "build",
+                    "name": "m0plus-minsize"
+                },
+                {
+                    "type": "test",
+                    "name": "m0plus-debug"
+                },
+                {
+                    "type": "test",
+                    "name": "m0plus-maxspeed"
+                },
+                {
+                    "type": "test",
+                    "name": "m0plus-minsize"
+                }
             ]
         },
         {
             "name": "m1",
             "steps": [
-                { "type": "configure", "name": "m1" },
-                { "type": "build", "name": "m1-debug" },
-                { "type": "build", "name": "m1-maxspeed" },
-                { "type": "build", "name": "m1-minsize" },
-                { "type": "test", "name": "m1-debug" },
-                { "type": "test", "name": "m1-maxspeed" },
-                { "type": "test", "name": "m1-minsize" }
+                {
+                    "type": "configure",
+                    "name": "m1"
+                },
+                {
+                    "type": "build",
+                    "name": "m1-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "m1-maxspeed"
+                },
+                {
+                    "type": "build",
+                    "name": "m1-minsize"
+                },
+                {
+                    "type": "test",
+                    "name": "m1-debug"
+                },
+                {
+                    "type": "test",
+                    "name": "m1-maxspeed"
+                },
+                {
+                    "type": "test",
+                    "name": "m1-minsize"
+                }
             ]
         },
         {
             "name": "m3",
             "steps": [
-                { "type": "configure", "name": "m3" },
-                { "type": "build", "name": "m3-debug" },
-                { "type": "build", "name": "m3-maxspeed" },
-                { "type": "build", "name": "m3-minsize" },
-                { "type": "test", "name": "m3-debug" },
-                { "type": "test", "name": "m3-maxspeed" },
-                { "type": "test", "name": "m3-minsize" }
+                {
+                    "type": "configure",
+                    "name": "m3"
+                },
+                {
+                    "type": "build",
+                    "name": "m3-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "m3-maxspeed"
+                },
+                {
+                    "type": "build",
+                    "name": "m3-minsize"
+                },
+                {
+                    "type": "test",
+                    "name": "m3-debug"
+                },
+                {
+                    "type": "test",
+                    "name": "m3-maxspeed"
+                },
+                {
+                    "type": "test",
+                    "name": "m3-minsize"
+                }
             ]
         }
     ]

@@ -12,5 +12,5 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
 
-add_asm_test(test_exceptions armv7m-intrinsics)
-add_asm_test(test_exceptions_v7m armv7m-intrinsics)
+add_asm_test(armv7m-intrinsics test_exceptions)
+add_asm_test(armv7m-intrinsics test_exceptions_v7m)

@@ -12,4 +12,4 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
 
-add_asm_test(test_exceptions armv6m-intrinsics)
+add_asm_test(armv6m-intrinsics test_exceptions)

@@ -17,11 +17,9 @@ cmake_minimum_required(VERSION 3.13)
 project(arm-cortex-mx-core-tests
     LANGUAGES CXX
     VERSION 0.1.0
-    DESCRIPTION "Tests for the Embedded Society arm-cortex-mx core and intrinsics libraries"
+    DESCRIPTION "Tests for the Embedded Society's ARM Cortex-M libraries"
     HOMEPAGE_URL "https://github.com/embedded-society/arm-cortex-mx-core-tests"
 )
-
-# --- Target ARM Cortex-M architecture selection -----------------------------
 
 set(AVAILABLE_ARM_CORTEX_M_ARCHS
     "M0"
@@ -36,14 +34,12 @@ if(NOT DEFINED ARM_CORTEX_M_ARCH)
 endif()
 
 if(NOT ARM_CORTEX_M_ARCH)
-    message(FATAL_ERROR "Missing target ARM Cortex-M architecture (pass -DARM_CORTEX_M_ARCH=<arch> or use a preset)")
+    message(FATAL_ERROR "Missing target ARM Cortex-M architecture for which to build the tests")
 endif()
 
 if(NOT ARM_CORTEX_M_ARCH IN_LIST AVAILABLE_ARM_CORTEX_M_ARCHS)
     message(FATAL_ERROR "Unsupported ARM Cortex-M architecture: ${ARM_CORTEX_M_ARCH}")
 endif()
-
-# --- Build configurations ---------------------------------------------------
 
 get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 
@@ -72,40 +68,37 @@ endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# --- Architecture -> CPU flag + libraries under test ------------------------
-
 if(ARM_CORTEX_M_ARCH STREQUAL "M0")
-    set(ARM_CPU_FLAG "-mcpu=cortex-m0")
-    set(CORE_LIBRARY "arm-cortex-m0-core")
-    set(INTRINSICS_LIBRARY "armv6m-intrinsics")
+    target_compile_definitions(${PROJECT_NAME} INTERFACE ARM_CORTEX_M0)
+    target_compile_options(${PROJECT_NAME} INTERFACE -mcpu=cortex-m0)
+    target_link_options(${PROJECT_NAME} INTERFACE -mcpu=cortex-m0)
 elseif(ARM_CORTEX_M_ARCH STREQUAL "M0PLUS")
-    set(ARM_CPU_FLAG "-mcpu=cortex-m0plus")
-    set(CORE_LIBRARY "arm-cortex-m0plus-core")
-    set(INTRINSICS_LIBRARY "armv6m-intrinsics")
+    target_compile_definitions(${PROJECT_NAME} INTERFACE ARM_CORTEX_M0PLUS)
+    target_compile_options(${PROJECT_NAME} INTERFACE -mcpu=cortex-m0plus)
+    target_link_options(${PROJECT_NAME} INTERFACE -mcpu=cortex-m0plus)
 elseif(ARM_CORTEX_M_ARCH STREQUAL "M1")
-    set(ARM_CPU_FLAG "-mcpu=cortex-m1")
-    set(CORE_LIBRARY "arm-cortex-m1-core")
-    set(INTRINSICS_LIBRARY "armv6m-intrinsics")
+    target_compile_definitions(${PROJECT_NAME} INTERFACE ARM_CORTEX_M1)
+    target_compile_options(${PROJECT_NAME} INTERFACE -mcpu=cortex-m1)
+    target_link_options(${PROJECT_NAME} INTERFACE -mcpu=cortex-m1)
 elseif(ARM_CORTEX_M_ARCH STREQUAL "M3")
-    set(ARM_CPU_FLAG "-mcpu=cortex-m3")
-    set(CORE_LIBRARY "arm-cortex-m3-core")
-    set(INTRINSICS_LIBRARY "armv7m-intrinsics")
+    target_compile_definitions(${PROJECT_NAME} INTERFACE ARM_CORTEX_M3)
+    target_compile_options(${PROJECT_NAME} INTERFACE -mcpu=cortex-m3)
+    target_link_options(${PROJECT_NAME} INTERFACE -mcpu=cortex-m3)
 endif()
 
-# The shared arm-cmake-toolchains deliberately do NOT set -mcpu/-mthumb (they
-# stay reusable across all Cortex cores), so the tests supply the CPU flag here.
-add_compile_options(${ARM_CPU_FLAG})
-add_link_options(${ARM_CPU_FLAG})
-
-# Libraries under test are git submodules checked out at the repository root.
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/${CORE_LIBRARY}"
-    "${CMAKE_CURRENT_BINARY_DIR}/libs/${CORE_LIBRARY}")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/${INTRINSICS_LIBRARY}"
-    "${CMAKE_CURRENT_BINARY_DIR}/libs/${INTRINSICS_LIBRARY}")
-
-# --- Tests ------------------------------------------------------------------
+if(ARM_CORTEX_M_ARCH STREQUAL "M0")
+    add_subdirectory("arm-cortex-m0-core")
+    add_subdirectory("armv6m-intrinsics")
+elseif(ARM_CORTEX_M_ARCH STREQUAL "M0PLUS")
+    add_subdirectory("arm-cortex-m0plus-core")
+    add_subdirectory("armv6m-intrinsics")
+elseif(ARM_CORTEX_M_ARCH STREQUAL "M1")
+    add_subdirectory("arm-cortex-m1-core")
+    add_subdirectory("armv6m-intrinsics")
+elseif(ARM_CORTEX_M_ARCH STREQUAL "M3")
+    add_subdirectory("arm-cortex-m3-core")
+    add_subdirectory("armv7m-intrinsics")
+endif()
 
 include(CTest)
-include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/add_asm_test.cmake")
-
 add_subdirectory(tests)
