@@ -10,8 +10,8 @@ on:
     workflow_dispatch: # Manual trigger option.
 
 jobs:
-    # Build the arm-dev-env image once and populate the shared build cache, so
-    # the per-architecture jobs below restore it instead of each doing a full
+    # Build the dev-environment image once and populate the shared build cache,
+    # so the per-architecture jobs below restore it instead of each doing a full
     # (toolchain-downloading) cold build.
     build_dev_env:
         name: Build dev environment image
@@ -22,7 +22,7 @@ jobs:
             - name: Checkout Github repository
               uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
               with:
-                submodules: recursive # arm-dev-env provides the Dockerfile; checkout wires up the submodule URL auth.
+                submodules: false # The Dockerfile lives in .devcontainer/ (this repo); no submodules needed here.
 
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4
@@ -30,12 +30,12 @@ jobs:
             - name: Warm the dev environment image build cache
               uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
               with:
-                context: arm-dev-env # Dockerfile defaults to <context>/Dockerfile.
+                context: .devcontainer # Dockerfile defaults to <context>/Dockerfile.
                 platforms: linux/amd64
-                push: false # Never push: arm-dev-env is consumed as a Dockerfile, not a published image.
+                push: false # The image is consumed as a Dockerfile, not published.
                 load: false # Cache only; nothing to run in this job.
-                cache-from: type=gha,scope=arm-dev-env
-                cache-to: type=gha,mode=max,scope=arm-dev-env
+                cache-from: type=gha,scope=devenv
+                cache-to: type=gha,mode=max,scope=devenv
                 provenance: false # Disabled implicit provenance.
 
     verify_pr:
@@ -56,7 +56,7 @@ jobs:
             - name: Checkout Github repository
               uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
               with:
-                submodules: recursive # Libraries + toolchains under test, and arm-dev-env.
+                submodules: recursive # Libraries + toolchains under test.
 
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4
@@ -64,12 +64,12 @@ jobs:
             - name: Build the dev environment image (restored from cache)
               uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
               with:
-                context: arm-dev-env
+                context: .devcontainer
                 platforms: linux/amd64
                 push: false
                 load: true # Load into the local Docker daemon so the next step can run it.
-                tags: arm-dev-env:ci
-                cache-from: type=gha,scope=arm-dev-env
+                tags: devenv:ci
+                cache-from: type=gha,scope=devenv
                 provenance: false
 
             - name: Run CMake workflow
@@ -77,7 +77,7 @@ jobs:
                 docker run --rm \
                   --volume "${{ github.workspace }}:/work" \
                   --workdir /work \
-                  arm-dev-env:ci \
+                  devenv:ci \
                   cmake --workflow --preset=${{ matrix.arch }}
 
     pr_verification_summary:

@@ -39,28 +39,31 @@ FROM fetch-base AS cmake
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-ARG CMAKE_VERSION=v4.3.3
+ARG CMAKE_VERSION=v4.3.4
 
+# CMake renamed its Linux x86_64 tarball from "Linux-x86_64" (<= 3.19) to
+# "linux-x86_64" (>= 3.20), so resolve whichever casing this version ships.
+# Verify against the release's SHA-256.txt file rather than the GitHub API
+# "digest" field, which is null for older releases -- so any CMAKE_VERSION
+# builds here unchanged.
 RUN CMAKE_VERSION_NUM="${CMAKE_VERSION#v}" && \
-    CMAKE_FILE="cmake-${CMAKE_VERSION_NUM}-linux-x86_64.tar.gz" && \
+    CMAKE_FILE_LOWER="cmake-${CMAKE_VERSION_NUM}-linux-x86_64.tar.gz" && \
+    CMAKE_FILE_UPPER="cmake-${CMAKE_VERSION_NUM}-Linux-x86_64.tar.gz" && \
+    CMAKE_BASE_URL="https://github.com/Kitware/CMake/releases/download/${CMAKE_VERSION}" && \
     CMAKE_API_RESPONSE=$(curl -fsSL --retry 3 --retry-connrefused --connect-timeout 15 --max-time 120 "https://api.github.com/repos/Kitware/CMake/releases/tags/${CMAKE_VERSION}") && \
-    CMAKE_DIGEST=$(echo "${CMAKE_API_RESPONSE}" | jq -r ".assets[] | select(.name == \"${CMAKE_FILE}\") | .digest") && \
-    if [ -z "${CMAKE_DIGEST}" ] || [ "${CMAKE_DIGEST}" = "null" ]; then \
-        echo "ERROR: Failed to get CMake digest from GitHub API"; \
+    CMAKE_FILE=$(echo "${CMAKE_API_RESPONSE}" | jq -r --arg lo "${CMAKE_FILE_LOWER}" --arg up "${CMAKE_FILE_UPPER}" 'first(.assets[] | select(.name == $lo or .name == $up) | .name)') && \
+    if [ -z "${CMAKE_FILE}" ] || [ "${CMAKE_FILE}" = "null" ]; then \
+        echo "ERROR: No Linux x86_64 CMake tarball found for ${CMAKE_VERSION}"; \
         echo "API Response: ${CMAKE_API_RESPONSE}"; \
         exit 1; \
     fi && \
-    if [[ ! "${CMAKE_DIGEST}" =~ ^sha256: ]]; then \
-        echo "ERROR: Unexpected CMake digest format: ${CMAKE_DIGEST}"; \
-        echo "Expected format: sha256:HASH"; \
-        exit 1; \
-    fi && \
-    CMAKE_HASH=$(echo "${CMAKE_DIGEST}" | cut -d: -f2) && \
-    wget -q --tries=3 --timeout=30 --retry-connrefused "https://github.com/Kitware/CMake/releases/download/${CMAKE_VERSION}/${CMAKE_FILE}" && \
-    echo "${CMAKE_HASH}  ${CMAKE_FILE}" | sha256sum --check && \
+    CMAKE_SHA_FILE="cmake-${CMAKE_VERSION_NUM}-SHA-256.txt" && \
+    wget -q --tries=3 --timeout=30 --retry-connrefused "${CMAKE_BASE_URL}/${CMAKE_SHA_FILE}" && \
+    wget -q --tries=3 --timeout=30 --retry-connrefused "${CMAKE_BASE_URL}/${CMAKE_FILE}" && \
+    sha256sum --check --ignore-missing "${CMAKE_SHA_FILE}" && \
     mkdir -p /opt/cmake && \
     tar -xzf "${CMAKE_FILE}" -C /opt/cmake --strip-components=1 && \
-    rm "${CMAKE_FILE}"
+    rm "${CMAKE_FILE}" "${CMAKE_SHA_FILE}"
 
 FROM fetch-base AS arm-none-eabi
 
