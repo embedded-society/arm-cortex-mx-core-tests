@@ -1,0 +1,27 @@
+[submodule "arm-cmake-toolchains"]
+	path = arm-cmake-toolchains
+	url = git@github.com:embedded-society/arm-cmake-toolchains.git
+[submodule "arm-cortex-m1-core"]
+	path = arm-cortex-m1-core
+	url = git@github.com:embedded-society/arm-cortex-m1-core.git
+[submodule "arm-cortex-m0plus-core"]
+	path = arm-cortex-m0plus-core
+	url = git@github.com:embedded-society/arm-cortex-m0plus-core.git
+[submodule "arm-cortex-m3-core"]
+	path = arm-cortex-m3-core
+	url = git@github.com:embedded-society/arm-cortex-m3-core.git
+[submodule "arm-cortex-m4-core"]
+	path = arm-cortex-m4-core
+	url = git@github.com:embedded-society/arm-cortex-m4-core.git
+[submodule "armv7m-intrinsics"]
+	path = armv7m-intrinsics
+	url = git@github.com:embedded-society/armv7m-intrinsics.git
+[submodule "armv7em-intrinsics"]
+	path = armv7em-intrinsics
+	url = git@github.com:embedded-society/armv7em-intrinsics.git
+[submodule "arm-cortex-m0-core"]
+	path = arm-cortex-m0-core
+	url = git@github.com:embedded-society/arm-cortex-m0-core.git
+[submodule "armv6m-intrinsics"]
+	path = armv6m-intrinsics
+	url = git@github.com:embedded-society/armv6m-intrinsics.git

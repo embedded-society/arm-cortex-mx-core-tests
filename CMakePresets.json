@@ -1,0 +1,321 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "common",
+            "hidden": true,
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/build",
+            "toolchainFile": "${sourceDir}/arm-cmake-toolchains/arm_none_eabi_gcc.cmake"
+        },
+        {
+            "name": "m0",
+            "inherits": "common",
+            "cacheVariables": {
+                "ARM_CORTEX_M_ARCH": "M0"
+            }
+        },
+        {
+            "name": "m0plus",
+            "inherits": "common",
+            "cacheVariables": {
+                "ARM_CORTEX_M_ARCH": "M0PLUS"
+            }
+        },
+        {
+            "name": "m1",
+            "inherits": "common",
+            "cacheVariables": {
+                "ARM_CORTEX_M_ARCH": "M1"
+            }
+        },
+        {
+            "name": "m3",
+            "inherits": "common",
+            "cacheVariables": {
+                "ARM_CORTEX_M_ARCH": "M3"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "m0-debug",
+            "configurePreset": "m0",
+            "configuration": "Debug"
+        },
+        {
+            "name": "m0-maxspeed",
+            "configurePreset": "m0",
+            "configuration": "MaxSpeed"
+        },
+        {
+            "name": "m0-minsize",
+            "configurePreset": "m0",
+            "configuration": "MinSize"
+        },
+        {
+            "name": "m0plus-debug",
+            "configurePreset": "m0plus",
+            "configuration": "Debug"
+        },
+        {
+            "name": "m0plus-maxspeed",
+            "configurePreset": "m0plus",
+            "configuration": "MaxSpeed"
+        },
+        {
+            "name": "m0plus-minsize",
+            "configurePreset": "m0plus",
+            "configuration": "MinSize"
+        },
+        {
+            "name": "m1-debug",
+            "configurePreset": "m1",
+            "configuration": "Debug"
+        },
+        {
+            "name": "m1-maxspeed",
+            "configurePreset": "m1",
+            "configuration": "MaxSpeed"
+        },
+        {
+            "name": "m1-minsize",
+            "configurePreset": "m1",
+            "configuration": "MinSize"
+        },
+        {
+            "name": "m3-debug",
+            "configurePreset": "m3",
+            "configuration": "Debug"
+        },
+        {
+            "name": "m3-maxspeed",
+            "configurePreset": "m3",
+            "configuration": "MaxSpeed"
+        },
+        {
+            "name": "m3-minsize",
+            "configurePreset": "m3",
+            "configuration": "MinSize"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "common",
+            "hidden": true,
+            "output": {
+                "outputOnFailure": true,
+                "verbosity": "verbose"
+            },
+            "execution": {
+                "jobs": 0
+            }
+        },
+        {
+            "name": "m0-debug",
+            "inherits": "common",
+            "configurePreset": "m0",
+            "configuration": "Debug"
+        },
+        {
+            "name": "m0-maxspeed",
+            "inherits": "common",
+            "configurePreset": "m0",
+            "configuration": "MaxSpeed"
+        },
+        {
+            "name": "m0-minsize",
+            "inherits": "common",
+            "configurePreset": "m0",
+            "configuration": "MinSize"
+        },
+        {
+            "name": "m0plus-debug",
+            "inherits": "common",
+            "configurePreset": "m0plus",
+            "configuration": "Debug"
+        },
+        {
+            "name": "m0plus-maxspeed",
+            "inherits": "common",
+            "configurePreset": "m0plus",
+            "configuration": "MaxSpeed"
+        },
+        {
+            "name": "m0plus-minsize",
+            "inherits": "common",
+            "configurePreset": "m0plus",
+            "configuration": "MinSize"
+        },
+        {
+            "name": "m1-debug",
+            "inherits": "common",
+            "configurePreset": "m1",
+            "configuration": "Debug"
+        },
+        {
+            "name": "m1-maxspeed",
+            "inherits": "common",
+            "configurePreset": "m1",
+            "configuration": "MaxSpeed"
+        },
+        {
+            "name": "m1-minsize",
+            "inherits": "common",
+            "configurePreset": "m1",
+            "configuration": "MinSize"
+        },
+        {
+            "name": "m3-debug",
+            "inherits": "common",
+            "configurePreset": "m3",
+            "configuration": "Debug"
+        },
+        {
+            "name": "m3-maxspeed",
+            "inherits": "common",
+            "configurePreset": "m3",
+            "configuration": "MaxSpeed"
+        },
+        {
+            "name": "m3-minsize",
+            "inherits": "common",
+            "configurePreset": "m3",
+            "configuration": "MinSize"
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "m0",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "m0"
+                },
+                {
+                    "type": "build",
+                    "name": "m0-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "m0-maxspeed"
+                },
+                {
+                    "type": "build",
+                    "name": "m0-minsize"
+                },
+                {
+                    "type": "test",
+                    "name": "m0-debug"
+                },
+                {
+                    "type": "test",
+                    "name": "m0-maxspeed"
+                },
+                {
+                    "type": "test",
+                    "name": "m0-minsize"
+                }
+            ]
+        },
+        {
+            "name": "m0plus",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "m0plus"
+                },
+                {
+                    "type": "build",
+                    "name": "m0plus-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "m0plus-maxspeed"
+                },
+                {
+                    "type": "build",
+                    "name": "m0plus-minsize"
+                },
+                {
+                    "type": "test",
+                    "name": "m0plus-debug"
+                },
+                {
+                    "type": "test",
+                    "name": "m0plus-maxspeed"
+                },
+                {
+                    "type": "test",
+                    "name": "m0plus-minsize"
+                }
+            ]
+        },
+        {
+            "name": "m1",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "m1"
+                },
+                {
+                    "type": "build",
+                    "name": "m1-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "m1-maxspeed"
+                },
+                {
+                    "type": "build",
+                    "name": "m1-minsize"
+                },
+                {
+                    "type": "test",
+                    "name": "m1-debug"
+                },
+                {
+                    "type": "test",
+                    "name": "m1-maxspeed"
+                },
+                {
+                    "type": "test",
+                    "name": "m1-minsize"
+                }
+            ]
+        },
+        {
+            "name": "m3",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "m3"
+                },
+                {
+                    "type": "build",
+                    "name": "m3-debug"
+                },
+                {
+                    "type": "build",
+                    "name": "m3-maxspeed"
+                },
+                {
+                    "type": "build",
+                    "name": "m3-minsize"
+                },
+                {
+                    "type": "test",
+                    "name": "m3-debug"
+                },
+                {
+                    "type": "test",
+                    "name": "m3-maxspeed"
+                },
+                {
+                    "type": "test",
+                    "name": "m3-minsize"
+                }
+            ]
+        }
+    ]
+}
