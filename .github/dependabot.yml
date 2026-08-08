@@ -3,10 +3,10 @@ updates:
     - package-ecosystem: "github-actions"
       directory: "/"
       schedule:
-          interval: "weekly"
-          day: "saturday"
+          interval: weekly
+          day: saturday
           time: "00:00"
-          timezone: "UTC"
+          timezone: "Europe/Ljubljana"
       groups:
           github-actions:
               patterns: ["*"]
